@@ -1,115 +1,156 @@
 # BharatDoc AI — Indian Document Understanding Tool
 
-A lightweight Streamlit prototype for uploading Indian-language notices, forms and government documents, extracting text, identifying common fields, generating a short summary and answering simple questions from the document.
+A lightweight Streamlit application for uploading Indian-language notices, forms and government documents, extracting text, identifying important fields, generating summaries and answering questions using document evidence.
 
-## Important project status
+## 1. Project Overview
 
-This is a **working prototype**, not a completed integration of BharatGen Patram and IndicTrans2.
+BharatDoc AI aims to make Indian government documents easier to understand by allowing users to upload documents, extract information and ask questions in a simple interface.
 
-- **Implemented:** Streamlit upload UI, text-based PDF extraction, image/scanned-PDF OCR path, basic field extraction, extractive summary, evidence-sentence question answering, text download.
-- **Integration pending:** BharatGen Patram model inference and AI4Bharat IndicTrans2 translation.
-- **Limitations:** Regex-based field extraction and keyword-based Q&A are baseline methods. Indic OCR depends on installed Tesseract language packs. Always verify extracted values against the original document.
+### Key Features
 
-BharatGen's model guidance indicates Patram requires substantial GPU memory (around 24 GB). Do not spend the two-hour build window attempting a local Patram setup unless suitable GPU access and model access are already available.
+- Upload PDF and image documents.
+- Extract text from text-based and scanned PDFs.
+- Perform OCR on image-based documents.
+- Extract dates, phone numbers, email addresses and reference numbers.
+- Generate short document summaries.
+- Answer questions using extracted document text.
+- Display supporting evidence for answers.
+- Download extracted text.
 
-## 1. Run locally
+## 2. Technology Stack
 
-Use Python 3.10 or 3.11 if available.
+| Technology | Purpose |
+|---|---|
+| Python | Core programming |
+| Streamlit | User interface |
+| PyMuPDF | PDF text extraction |
+| Tesseract OCR | Scanned document and image text extraction |
+| Pillow | Image processing |
+| Regular Expressions | Basic information extraction |
+| Rule-based QA | Evidence-based question answering |
+
+## 3. Model Integration Status
+
+The project is designed around the following models:
+
+- **BharatGen Patram:** Planned integration for vision-language document understanding.
+- **AI4Bharat IndicTrans2:** Planned integration for Indian-language translation.
+
+**Important:** The current prototype uses Tesseract, PyMuPDF and rule-based processing. Patram and IndicTrans2 inference have not yet been integrated.
+
+## 4. Installation and Setup
+
+### Requirements
+
+- Python 3.10 or 3.11
+- Git
+- Tesseract OCR for scanned documents and image OCR
+
+### Clone the repository
 
 ```bash
-python -m venv .venv
+git clone https://github.com/poornavm/BharatDoc-AI.git
+cd BharatDoc-AI
 ```
 
-Windows PowerShell:
+### Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+### Activate it on Windows
+
 ```powershell
-.venv\Scripts\Activate.ps1
+venv\Scripts\Activate.ps1
 ```
 
-macOS/Linux:
-```bash
-source .venv/bin/activate
-```
+### Install dependencies
 
-Install packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-Run:
+### Run the application
+
 ```bash
 streamlit run app.py
 ```
 
-Open the local URL shown in the terminal (usually http://localhost:8501).
+Open the local URL displayed in the terminal, usually:
 
-## 2. OCR requirement
+`http://localhost:8501`
 
-For image files and scanned PDFs, install the **Tesseract OCR executable** separately. The Python package `pytesseract` is only a wrapper.
+## 5. Application Workflow
 
-For Indic-language OCR, install the corresponding Tesseract trained language data and configure Tesseract if it is not on PATH. If Tesseract is unavailable, text-based PDFs can still be processed.
+1. Upload an Indian-language document.
+2. Extract text using PDF processing or OCR.
+3. Identify important fields such as dates, phone numbers and reference numbers.
+4. Generate a short summary.
+5. Enter questions about the uploaded document.
+6. Retrieve answers with supporting evidence.
+7. Download the extracted text.
 
-## 3. Model responsibilities
-
-| Component | Responsibility | Status |
-|---|---|---|
-| BharatGen Patram | Vision-language document understanding and structured interpretation | Planned integration |
-| Tesseract / PyMuPDF | Baseline OCR and PDF text extraction | Implemented |
-| AI4Bharat IndicTrans2 | Translate between supported Indian languages and English | Planned integration |
-| Rule-based extraction | Detect dates, phone numbers, emails and reference numbers | Implemented baseline |
-| Extractive QA | Select a relevant evidence sentence from the document | Implemented baseline |
-
-IndicTrans2 supports 22 scheduled Indic languages. Official setup and inference instructions:
-https://github.com/AI4Bharat/IndicTrans2
-
-BharatGen model information:
-https://bharatgen.com/models/
-
-## 4. Suggested two-hour build sequence
-
-1. 0–15 min: create venv, install dependencies, run Streamlit.
-2. 15–35 min: test with a text-based PDF.
-3. 35–55 min: test image OCR; install Tesseract only if already feasible.
-4. 55–75 min: test fields, summary and question answering; fix obvious issues.
-5. 75–95 min: prepare 30–50 test cases and record correct/incorrect outputs.
-6. 95–120 min: capture screenshots, update README, prepare demo explanation.
-
-## 5. Test plan
-
-See `tests/test_cases.csv`. Use real or publicly available sample documents for final evaluation, and manually record the ground-truth values. The included test rows are test scenarios, not measured model results.
-
-## 6. Demo flow
-
-1. Upload a sample government notice or form.
-2. Show extracted text.
-3. Show detected dates, phone numbers, email and reference number.
-4. Show the summary.
-5. Ask: "What is the last date for submission?"
-6. Show the answer and its supporting sentence.
-7. Download extracted text.
-
-## 7. Failure analysis to report
-
-- Blurry or skewed scans can cause OCR errors.
-- Tables, stamps, handwriting and multi-column layouts may be read incorrectly.
-- Date formats can be ambiguous.
-- Regex extraction may miss names and addresses or extract irrelevant numbers.
-- Keyword-based QA can select a related but incorrect sentence.
-- Translation may change legal or administrative meaning; verify critical content.
-- The current build does not claim Patram or IndicTrans2 inference until those models are connected.
-
-## 8. Repository structure
+## 6. Project Structure
 
 ```text
 indian_document_understanding_tool/
+│
 ├── app.py
 ├── app/
 │   ├── __init__.py
 │   ├── document_processor.py
 │   ├── analysis.py
 │   └── translation.py
+│
 ├── tests/
 │   └── test_cases.csv
+│
 ├── sample_docs/
+│   └── sample_notice.txt
+│
 ├── requirements.txt
-└── README.md
+├── README.md
+└── .gitignore
 ```
+
+## 7. Testing and Evaluation
+
+The project includes test scenarios in `tests/test_cases.csv`.
+
+Evaluation focuses on:
+
+- Text extraction accuracy
+- Field extraction accuracy
+- Question-answering accuracy
+- Evidence retrieval
+- Handling of missing information
+
+The current test cases are scenarios, not measured accuracy results. Actual performance must be evaluated using manually verified answers.
+
+## 8. Current Limitations
+
+- OCR accuracy depends on document quality and installed language data.
+- Tables, handwriting and complex layouts may produce extraction errors.
+- Regex-based extraction may miss or incorrectly identify fields.
+- Rule-based question answering may retrieve an unrelated sentence.
+- Translation functionality is not yet connected to IndicTrans2.
+- Patram inference is not yet integrated.
+
+Important extracted information should always be verified against the original document.
+
+## 9. Future Enhancements
+
+- Integrate BharatGen Patram for multimodal document understanding.
+- Integrate AI4Bharat IndicTrans2 for multilingual translation.
+- Improve extraction of tables and structured layouts.
+- Add stronger semantic question answering.
+- Expand evaluation across multiple Indian languages and document types.
+
+## 10. References
+
+- BharatGen: https://bharatgen.com/models/
+- AI4Bharat IndicTrans2: https://github.com/AI4Bharat/IndicTrans2
+- Streamlit: https://streamlit.io/
+- PyMuPDF: https://pymupdf.readthedocs.io/
+- Tesseract OCR: https://github.com/tesseract-ocr/tesseract
